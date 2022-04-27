@@ -1,0 +1,9 @@
+packageName: Quali.Torque.Api
+useNewtonsoft: false
+buildTarget: library
+isLibrary: true
+apiTests: false
+modelTests: false
+supportingFiles: false
+generateBody: fasle
+classModifier: abstract

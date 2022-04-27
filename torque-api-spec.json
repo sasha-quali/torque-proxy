@@ -1,0 +1,5045 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Torque API Reference",
+    "description": "This page contains information about the Torque APIs and how to use it.<br><br>To be able to test the API methods, you will need an access token to be set in the Authorize section.If you got to this page from your Torque account, we already made it available for you, but you can switch to a different token as needed.<br>To get a different token, use the 'Get token' function available under the 'Access Tokens' section. After running the method, copy the access_token you get in the response and set it in the Authorize fieldas 'Bearer access_token'. For example: Bearer fqSWuw72BbUVFn8AbokF77GJ0r5KEn9MiZjLXF8kBwI.<br><br>The API can be accessed with your account endpoint as will be mentioned in the descriptions and examples or using https://qtorque.io as the prefix instead."
+  },
+  "paths": {
+    "/api/accounts/{account}/login": {
+      "post": {
+        "tags": [
+          "Access Tokens"
+        ],
+        "summary": "Get token",
+        "description": "Creates an API session token. Token validity period is 7200 seconds.",
+        "parameters": [
+          {
+            "name": "account",
+            "in": "path",
+            "description": "Account name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModelForLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials or too many login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [ ]
+      }
+    },
+    "/api/token/longtoken": {
+      "post": {
+        "tags": [
+          "Access Tokens"
+        ],
+        "summary": "Get long token",
+        "description": "Requests a long-lived access token. Token validity period is 2147483647 seconds.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/token/refresh": {
+      "post": {
+        "tags": [
+          "Access Tokens"
+        ],
+        "summary": "Refresh token",
+        "description": "Extends an existing session. Use the new access token returned in the method’s response to reauthorize the session.",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Refresh token is invalid or was not given",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [ ]
+      }
+    },
+    "/api/token/revoke": {
+      "post": {
+        "tags": [
+          "Access Tokens"
+        ],
+        "summary": "Revoke token",
+        "description": "Cancels the current API session (nullifies the active access token)",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "422": {
+            "description": "Failed to revoke access or refresh token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/token/revokelongtoken": {
+      "post": {
+        "tags": [
+          "Access Tokens"
+        ],
+        "summary": "Revoke long token",
+        "description": "Cancels the current long token API session (nullifies the active long token)",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Failed to revoke long access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings/cloudaccounts/computeservices/k8s/agent-deployment-yaml": {
+      "get": {
+        "tags": [
+          "Agent"
+        ],
+        "summary": "Get the K8s deployment YAML",
+        "description": "Gets the Kubernetes agent deployment YAML file.",
+        "parameters": [
+          {
+            "name": "cloudAccount",
+            "in": "query",
+            "description": "Cloud account containing the Kubernetes cluster",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "computeService",
+            "in": "query",
+            "description": "Kubernetes cluster name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sandboxNamespaces",
+            "in": "query",
+            "description": "Namespace defined in Kubernetes cluster",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Cloud account, compute service, or cluster not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Cloud not processed request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings/cloudaccounts/computeservices/k8s/renew-cluster-token": {
+      "put": {
+        "tags": [
+          "Agent"
+        ],
+        "summary": "Renew cluster token",
+        "description": "Renews expired cluster token.",
+        "parameters": [
+          {
+            "name": "cloudAccount",
+            "in": "query",
+            "description": "Cloud account containing the Kubernetes cluster",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "computeService",
+            "in": "query",
+            "description": "Kubernetes cluster name",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Cloud account, compute service, or cluster not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Could not processed request"
+          }
+        }
+      }
+    },
+    "/api/settings/computeservices/eks/agent-deployment-yaml": {
+      "get": {
+        "tags": [
+          "Agent"
+        ],
+        "summary": "Get EKS deployment YAML",
+        "description": "Gets the Amazon Elastic Kubernetes service (eks) agent deployment YAML file.",
+        "parameters": [
+          {
+            "name": "cloudAccount",
+            "in": "query",
+            "description": "Cloud account containing the Kubernetes cluster",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "computeService",
+            "in": "query",
+            "description": "Kubernetes cluster name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sandboxNamespace",
+            "in": "query",
+            "description": "Namespace defined in the Kubernetes cluster",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "roleArn",
+            "in": "query",
+            "description": "Rule ARN of the EKS",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Cloud account, compute service, or cluster not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Cloud not processed request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/blueprints": {
+      "get": {
+        "tags": [
+          "Blueprints"
+        ],
+        "summary": "Get published blueprints",
+        "description": "Returns a list of published blueprints in the space, including sample blueprints.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the desired blueprints",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Blueprint type: \"sandbox\" or \"production\"<br />\r\n            Optional: default is \"sandbox\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "commit",
+            "in": "query",
+            "description": "Blueprint commit: any commit name in a related repository<br />\r\n            Optional: default is null",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "branch",
+            "in": "query",
+            "description": "Blueprint branch: any branch name in a related repository<br />\r\n            Optional: default is null",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BlueprintForGetAllResponse"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/blueprints/{blueprint_name}/policies": {
+      "get": {
+        "tags": [
+          "Blueprints"
+        ],
+        "summary": "Get blueprint policy",
+        "description": "Get blueprint policy.\r\nRelevant only for blueprints in repository for sandbox environment.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the desired blueprint",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "blueprint_name",
+            "in": "path",
+            "description": "Name of the blueprint",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlueprintPolicyResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space or blueprint not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Blueprint belongs to production repository",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Blueprints"
+        ],
+        "summary": "Update blueprint policy",
+        "description": "Update policies of a blueprint. Relevant only for blueprints in a sandbox repository.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space where the blueprint resides",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "blueprint_name",
+            "in": "path",
+            "description": "Blueprint name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Update blueprint policy request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBlueprintPolicyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "422": {
+            "description": "Required parameters are missing, max duration too short or blueprint belongs to production repository",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space or blueprint not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Blueprints"
+        ],
+        "summary": "Reset blueprint policies",
+        "description": "Reset blueprint policies to the default behavior. Max duration will be cleared.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space where the blueprint resides",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "blueprint_name",
+            "in": "path",
+            "description": "Blueprint name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Space or blueprint not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Blueprint belongs to production repository",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/validations/blueprints": {
+      "post": {
+        "tags": [
+          "Blueprints"
+        ],
+        "summary": "Validate blueprint",
+        "description": "Runs validation check on a specific blueprint in the space.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the blueprint",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BlueprintValidationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlueprintValidationResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space or blueprint repository not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Blueprint name, blueprint type, or blueprint repository branch is empty",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/catalog": {
+      "get": {
+        "tags": [
+          "Blueprints Catalog"
+        ],
+        "summary": "Get blueprints in catalog",
+        "description": "Returns details of all published blueprints in the blueprints catalog, including sample blueprints.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the blueprints",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CatalogForGetAllResponse"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Blueprints Catalog"
+        ],
+        "summary": "Publish blueprint",
+        "description": "Publishes a blueprint to blueprints catalog.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space that will contain the blueprint",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddCatalogRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Space or blueprint not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/catalog/{blueprint_name}": {
+      "get": {
+        "tags": [
+          "Blueprints Catalog"
+        ],
+        "summary": "Get blueprint details",
+        "description": "Returns details of a published blueprint in blueprints catalog.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the blueprint",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "blueprint_name",
+            "in": "path",
+            "description": "Blueprint name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogForGetResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space, blueprint, or blueprint in catalog not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Blueprints Catalog"
+        ],
+        "summary": "Unpublish blueprint",
+        "description": "Unpublishes a blueprint from blueprint catalog.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the blueprint",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "blueprint_name",
+            "in": "path",
+            "description": "Name of the blueprint to be unpublished from blueprints catalog",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Space or blueprint in catalog not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings/parameters": {
+      "get": {
+        "tags": [
+          "Parameters"
+        ],
+        "summary": "Get all parameters",
+        "description": "Gets all parameters from Parameter Store.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParameterStoreItemResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Parameters"
+        ],
+        "summary": "Create parameter",
+        "description": "Adds a parameter to Parameter Store.",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParameterStoreItemRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "422": {
+            "description": "Invalid parameter value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings/parameters/{param_name}": {
+      "get": {
+        "tags": [
+          "Parameters"
+        ],
+        "summary": "Get parameter",
+        "description": "Gets a parameter from Parameter Store.",
+        "parameters": [
+          {
+            "name": "param_name",
+            "in": "path",
+            "description": "Parameter name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParameterStoreItemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Parameter not found in Parameter Store",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Parameters"
+        ],
+        "summary": "Delete parameter",
+        "description": "Deletes a parameter from Parameter Store.",
+        "parameters": [
+          {
+            "name": "param_name",
+            "in": "path",
+            "description": "Parameter name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "422": {
+            "description": "Parameter not found in Parameter Store",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/production": {
+      "get": {
+        "tags": [
+          "Production Environments"
+        ],
+        "summary": "Get production environments",
+        "description": "Gets all production environments from a space.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the desired production environments",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductionResponseListItem"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Operation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Production Environments"
+        ],
+        "summary": "Create blue environment",
+        "description": "Creates a blue production environment.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space that will contain the blue production environment",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductionBlueRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Operation started",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateEnvResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Operation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space or user not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Could not process the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "424": {
+            "description": "Cloud account not accessible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/production/{production_id}": {
+      "get": {
+        "tags": [
+          "Production Environments"
+        ],
+        "summary": "Get blue environment",
+        "description": "Gets a blue production environment.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the blue production environment",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "production_id",
+            "in": "path",
+            "description": "Production environment ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductionBlueResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Operation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space or production environment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Production Environments"
+        ],
+        "summary": "Delete blue environment",
+        "description": "Deletes a blue production environment.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the blue production environment",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "production_id",
+            "in": "path",
+            "description": "Production environment ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Operation started"
+          },
+          "400": {
+            "description": "Operation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space or production environment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Production environment temporarily unavailable for termination",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "424": {
+            "description": "Cloud account not accessible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/production/{production_id}/debuggingservice": {
+      "put": {
+        "tags": [
+          "Production Environments"
+        ],
+        "summary": "Update blue environment debugging service",
+        "description": "Updates debugging service of blue production environment.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the blue production environment",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "production_id",
+            "in": "path",
+            "description": "Production environment ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "description": "New value of debugging service: \"on\" or \"off\"",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "202": {
+            "description": "Operation started"
+          },
+          "400": {
+            "description": "Operation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space, production environment, or QualiY not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Current status of QualiY conflicts with new value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Value is empty or invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "424": {
+            "description": "Cloud account not accessible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/production/{production_id}/green": {
+      "get": {
+        "tags": [
+          "Production Environments"
+        ],
+        "summary": "Get green environment",
+        "description": "Gets a green production environment",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the green production environment",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "production_id",
+            "in": "path",
+            "description": "Production environment ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductionGreenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Operation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space or production environment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Production Environments"
+        ],
+        "summary": "Creates a green production environment",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space that will contain the green production environment",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "production_id",
+            "in": "path",
+            "description": "Production environment ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductionGreenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Operation started",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateEnvResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Operation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space, user, or blue production environment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Could not process the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "424": {
+            "description": "Cloud account not accessible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Production Environments"
+        ],
+        "summary": "Deletes a green production environment",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the green production environment",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "production_id",
+            "in": "path",
+            "description": "Production environment ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Operation started"
+          },
+          "400": {
+            "description": "Operation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space or blue/green production not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Production environment temporarily unavailable for termination",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "424": {
+            "description": "Cloud account not accessible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/production/{production_id}/green/debuggingservice": {
+      "put": {
+        "tags": [
+          "Production Environments"
+        ],
+        "summary": "Update green environment debugging service",
+        "description": "Updates debugging service of green production environment.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the green production environment",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "production_id",
+            "in": "path",
+            "description": "Production environment ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "description": "New value of debugging service: \"on\" or \"off\"",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "202": {
+            "description": "Operation started"
+          },
+          "400": {
+            "description": "Operation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space, blue/green production environment, or QualiY not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Current status of QualiY conflicts with new value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Value is empty or invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "424": {
+            "description": "Cloud account not accessible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/production/{production_id}/green/exposure": {
+      "put": {
+        "tags": [
+          "Production Environments"
+        ],
+        "summary": "Expose green environment",
+        "description": "Exposes a green production environment.\r\nSee https://community.qtorque.io/creating-your-production-environment-56/managing-production-with-blue-green-deployment-231",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the green production environment",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "production_id",
+            "in": "path",
+            "description": "Production environment ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "description": "Exposure amount in percentage of the green production environment to user traffic\r\n            <remarks>\r\n            Value can be 0 or 100\r\n            </remarks>",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "202": {
+            "description": "Operation started"
+          },
+          "400": {
+            "description": "Operation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space or blue/green production environment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Green not ready for exposure or green cannot be exposed while promoting",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid exposure value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "424": {
+            "description": "Cloud account not accessible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/production/{production_id}/green/promote": {
+      "put": {
+        "tags": [
+          "Production Environments"
+        ],
+        "summary": "Promote green environment",
+        "description": "User traffic will be redirected only to green production environment.\r\nSee https://community.qtorque.io/creating-your-production-environment-56/managing-production-with-blue-green-deployment-231",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the green production environment",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "production_id",
+            "in": "path",
+            "description": "Production environment ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "202": {
+            "description": "Operation started"
+          },
+          "400": {
+            "description": "Operation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space, blue/green production environment, or account not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Green not ready for promoting or Green cannot be promoting while being exposed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "424": {
+            "description": "Cloud account not accessible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/sandbox": {
+      "get": {
+        "tags": [
+          "Sandbox Environments"
+        ],
+        "summary": "Get all sandboxes",
+        "description": "Returns details of all sandboxes in the space.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the sandboxes",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "Filter for the environment:\r\n- \"automation\": Sandboxes launched by any automation process in the space\r\n- \"my\": Sandboxes launched by the user\r\n- \"all\": Sandboxes launched by anyone in the space",
+            "schema": {
+              "type": "string",
+              "default": "all"
+            }
+          },
+          {
+            "name": "sandbox_name",
+            "in": "query",
+            "description": "String that all sandbox names must contain",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "description": "Amount of sandboxes to be retrieved",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SandboxResponseListItem"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Count is above the maximum allowed sandboxes (1000)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Sandbox Environments"
+        ],
+        "summary": "Start new sandbox",
+        "description": "Launches a new sandbox environment in Torque",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space that should contain the sandbox environment",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSandboxRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateEnvResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Operation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User is not permitted to launch sandbox from branch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space, current user, or compute service user not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Could not processed request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "424": {
+            "description": "Cloud account not accessible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/sandbox/{sandbox_id}": {
+      "get": {
+        "tags": [
+          "Sandbox Environments"
+        ],
+        "summary": "Gets sandbox details",
+        "description": "Gets details on a sandbox.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the sandbox",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sandbox_id",
+            "in": "path",
+            "description": "Sandbox ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SandboxResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space or sandbox not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "424": {
+            "description": "Cloud account is not accessible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Sandbox Environments"
+        ],
+        "summary": "End sandbox",
+        "description": "Ends a running sandbox from Torque.",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the sandbox",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sandbox_id",
+            "in": "path",
+            "description": "Sandbox ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ignore_errors",
+            "in": "query",
+            "description": "Should ignore errors during termination, if set to true then if termination of the sandbox failed it will be accepted as termination succeeded.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Operation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space not found, sandbox not found, or sandbox already ended",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid \"ignore_errors\" value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Sandbox already ending or temporarily unavailable for ending",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "424": {
+            "description": "Cloud not accessible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/sandbox/{sandbox_id}/debuggingservice": {
+      "put": {
+        "tags": [
+          "Sandbox Environments"
+        ],
+        "summary": "Turn Bastion on or off",
+        "description": "This API requires Bastion to be deployed in the sandbox environment",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the sandbox",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sandbox_id",
+            "in": "path",
+            "description": "Sandbox ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "description": "Indicates if to enable/disable the debugging service: \"on\" or \"off\"",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "202": {
+            "description": "Request is in progress or triggered"
+          },
+          "400": {
+            "description": "Operation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space not found, sandbox not found, or debugging service is disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The current status of the debugging service is conflicted with the new status request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "\"value\" is empty or invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "424": {
+            "description": "Cloud not accessible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/sandbox/{sandbox_id}/scheduled_end_time": {
+      "put": {
+        "tags": [
+          "Sandbox Environments"
+        ],
+        "summary": "Extend sandbox",
+        "description": "Extends the duration of a running sandbox",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "description": "Name of the space containing the sandbox",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sandbox_id",
+            "in": "path",
+            "description": "Sandbox ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "description": "New scheduled end time in ISO 8601 format. For example, 2021-10-06T08:27:05.215Z.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Operation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Space or sandbox not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "\"value\" (end time) is empty, not UTC, or time already passed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "424": {
+            "description": "Cloud not accessible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/sandbox/{sandboxId}/logs/tfapply": {
+      "get": {
+        "tags": [
+          "Sandbox Environments"
+        ],
+        "summary": "Get terraform apply logs",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sandboxId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "service_name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/sandbox/{sandboxId}/logs/tfdestroy": {
+      "get": {
+        "tags": [
+          "Sandbox Environments"
+        ],
+        "summary": "Get terraform destroy logs",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sandboxId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "service_name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/sandbox/{sandboxId}/logs/tfinit": {
+      "get": {
+        "tags": [
+          "Sandbox Environments"
+        ],
+        "summary": "Get terraform init logs",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sandboxId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "service_name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/spaces/{space_name}/sandbox/{sandboxId}/logs/tfplan": {
+      "get": {
+        "tags": [
+          "Sandbox Environments"
+        ],
+        "summary": "Get terraform plan logs",
+        "parameters": [
+          {
+            "name": "space_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sandboxId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "service_name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings/cloudproviders/aws": {
+      "get": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Get AWS cloud provider",
+        "description": "Get AWS cloud provider settings.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AwsCloudProviderSettingsModel"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Set AWS cloud provider",
+        "description": "Set AWS cloud provider settings.",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AwsCloudProviderSettingsModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ActivityResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "log": {
+            "type": "string",
+            "nullable": true
+          },
+          "time": {
+            "$ref": "#/components/schemas/TimeDataResponse"
+          }
+        },
+        "additionalProperties": false,
+        "x-internal": true
+      },
+      "AddCatalogRequest": {
+        "type": "object",
+        "properties": {
+          "blueprint_name": {
+            "type": "string",
+            "description": "Blueprint name",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request to add a blueprint to blueprint catalog",
+        "x-internal": true
+      },
+      "AppInstanceResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Application instance status (\"deploying\", \"pending\", \"done\", etc.)",
+            "nullable": true
+          },
+          "infra_id": {
+            "type": "string",
+            "description": "Infra ID of application instance",
+            "nullable": true
+          },
+          "instance_type": {
+            "type": "string",
+            "description": "EC2 instance type",
+            "nullable": true
+          },
+          "memory_limit": {
+            "type": "string",
+            "description": "RAM limitation for Kubernetes VM",
+            "nullable": true
+          },
+          "cpu_limit": {
+            "type": "string",
+            "description": "CPU limitation for Kubernetes VM",
+            "nullable": true
+          },
+          "access_links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectLinkResponse"
+            },
+            "nullable": true
+          },
+          "private_ip": {
+            "type": "string",
+            "description": "Application instance private IP",
+            "nullable": true
+          },
+          "compute_availability": {
+            "$ref": "#/components/schemas/ComputeAvailability"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hyperlink"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Application instance information",
+        "x-internal": true
+      },
+      "ApplicationResponse": {
+        "type": "object",
+        "properties": {
+          "private_address": {
+            "type": "string",
+            "description": "Application private address",
+            "nullable": true
+          },
+          "public_address": {
+            "type": "string",
+            "description": "Application public address",
+            "nullable": true
+          },
+          "internal_ports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Application internal ports",
+            "nullable": true
+          },
+          "external_ports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Application external ports",
+            "nullable": true
+          },
+          "shortcuts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Application shortcut rules\r\n<remarks>\r\nThe shortcut rule customizes the application link’s display text in the summary page of the sandbox or production environment\r\n</remarks>",
+            "nullable": true
+          },
+          "image_name": {
+            "type": "string",
+            "description": "Application cloud image (AMI for AWS and URN/subscription ID for Azure)",
+            "nullable": true
+          },
+          "internal_dns": {
+            "type": "string",
+            "description": "DNS name of the application in the sandbox (as decided by the cloud provider)",
+            "nullable": true
+          },
+          "instances": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AppInstanceResponse"
+            },
+            "description": "Application instances",
+            "nullable": true
+          },
+          "icon": {
+            "type": "string",
+            "description": "Application image name",
+            "nullable": true
+          },
+          "direct_access_protocols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of protocols for in-browser connection to VM (RDP | SSH | RDP,SSH)",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Application name",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "description": "Application status (\"Pending\", \"Aborted\", \"Done\", etc.)",
+            "nullable": true
+          },
+          "cloud": {
+            "$ref": "#/components/schemas/CloudResponse"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Application information",
+        "x-internal": true
+      },
+      "ApplicationResponseBase": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Application name",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "description": "Application status (\"Pending\", \"Aborted\", \"Done\", etc.)",
+            "nullable": true
+          },
+          "cloud": {
+            "$ref": "#/components/schemas/CloudResponse"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Application basic information",
+        "x-internal": true
+      },
+      "AwsCloudProviderSettingsModel": {
+        "type": "object",
+        "properties": {
+          "sidecar_image_param_name": {
+            "type": "string",
+            "description": "Side car image parameter name\r\n<remarks>\r\nParameter must be defined in Parameter Store\r\nIts value will be used as the sidecar image ID\r\n</remarks>",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "AWS cloud provider settings model",
+        "x-internal": true
+      },
+      "BlueprintApplicationForGetAllResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Application name",
+            "nullable": true
+          },
+          "version": {
+            "type": "string",
+            "description": "Application version",
+            "nullable": true
+          },
+          "icon_url": {
+            "type": "string",
+            "description": "URL of the application icon",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Blueprint application information",
+        "x-internal": true
+      },
+      "BlueprintCostResponse": {
+        "type": "object",
+        "properties": {
+          "average_hourly_cost": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false,
+        "x-internal": true
+      },
+      "BlueprintForGetAllResponse": {
+        "type": "object",
+        "properties": {
+          "blueprint_name": {
+            "type": "string",
+            "description": "Blueprint name",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Blueprint description",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "description": "Blueprint repository URL",
+            "nullable": true
+          },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlueprintInputResponse"
+            },
+            "nullable": true
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Indicates if the blueprint is published or not"
+          },
+          "last_modified": {
+            "type": "string",
+            "description": "Last modification date and time of the blueprint",
+            "format": "date-time"
+          },
+          "modified_by": {
+            "type": "string",
+            "description": "Name of the last user who modified the blueprint",
+            "nullable": true
+          },
+          "applications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlueprintApplicationForGetAllResponse"
+            },
+            "nullable": true
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlueprintServiceForGetAllResponse"
+            },
+            "nullable": true
+          },
+          "clouds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CloudResponse"
+            },
+            "nullable": true
+          },
+          "is_sample": {
+            "type": "boolean",
+            "description": "Indicates if the blueprint is a sample blueprint"
+          },
+          "artifacts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Artifact files of the blueprint applications\r\n<remarks>Maps application name to its relative artifacts path in the space</remarks>",
+            "nullable": true
+          },
+          "environment_type": {
+            "$ref": "#/components/schemas/EnvironmentType"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlueprintTagResponse"
+            },
+            "nullable": true
+          },
+          "policies": {
+            "$ref": "#/components/schemas/BlueprintPolicyResponse"
+          },
+          "cost": {
+            "$ref": "#/components/schemas/BlueprintCostResponse"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hyperlink"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Blueprint information",
+        "x-internal": true
+      },
+      "BlueprintInputResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Input name",
+            "nullable": true
+          },
+          "default_value": {
+            "type": "string",
+            "description": "When the sandbox is created, Torque automatically populates the input with this value.\r\n<remarks>\r\nUser can choose to edit the value or leave it as-is\r\n</remarks>",
+            "nullable": true
+          },
+          "display_style": {
+            "type": "string",
+            "description": "Indicates how to display the input value in UI\r\n<remarks>\r\n- To display the input value in plain text in the UI, do not assign a value.<br />\r\n- To hide the input value behind bullets, enter the value \"masked\".\r\n</remarks>",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Input description",
+            "nullable": true
+          },
+          "optional": {
+            "type": "boolean",
+            "description": "Indicates if the input is optional or not\r\n<remarks>\r\n- When optional is set to true, the user can leave the parameter empty.<br />\r\n- When optional is set to false, empty value(s) will result in validation error(s).\r\n</remarks>"
+          },
+          "possible_values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Possible values for the input\r\n<remarks>\r\n- Possible_values are optional\r\n- The default value is one of the possible values\r\n- Possible values must be unique\r\n</remarks>",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Blueprint input information",
+        "x-internal": true
+      },
+      "BlueprintPolicyResponse": {
+        "type": "object",
+        "properties": {
+          "max_duration": {
+            "type": "string",
+            "description": "Max duration of sandbox in ISO 8601 format: P{days}DT{hours}H{minutes}M{seconds}S] (for example, 'P0DT2H3M4S')",
+            "format": "date-span",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Blueprint policy response",
+        "x-internal": true
+      },
+      "BlueprintServiceForGetAllResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Service name\r\n<remarks>A service folder and YAML with this name should reside in the \"/services\" folder in the blueprint YAML’s repository</remarks>",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Service type (e.g. \"Terraform\")",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Blueprint service information",
+        "x-internal": true
+      },
+      "BlueprintSourceRequest": {
+        "type": "object",
+        "properties": {
+          "branch": {
+            "type": "string",
+            "description": "Blueprint repository branch",
+            "nullable": true
+          },
+          "commit": {
+            "type": "string",
+            "description": "Blueprint commit version",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request containing blueprint repository information",
+        "x-internal": true
+      },
+      "BlueprintSourceResponse": {
+        "type": "object",
+        "properties": {
+          "branch": {
+            "type": "string",
+            "description": "Blueprint repository branch",
+            "nullable": true
+          },
+          "commit": {
+            "type": "string",
+            "description": "Blueprint commit version",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Blueprint repository information",
+        "x-internal": true
+      },
+      "BlueprintTagResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "default_value": {
+            "type": "string",
+            "nullable": true
+          },
+          "possible_values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "x-internal": true
+      },
+      "BlueprintValidationRequest": {
+        "type": "object",
+        "properties": {
+          "blueprint_name": {
+            "type": "string",
+            "description": "Blueprint name",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Blueprint type: \"sandbox\" or \"production\"",
+            "nullable": true
+          },
+          "source": {
+            "$ref": "#/components/schemas/BlueprintSourceRequest"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request to validate blueprint",
+        "x-internal": true
+      },
+      "BlueprintValidationResponse": {
+        "type": "object",
+        "properties": {
+          "blueprint_name": {
+            "type": "string",
+            "description": "Blueprint name",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Blueprint description",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "description": "Blueprint repository URL",
+            "nullable": true
+          },
+          "source": {
+            "$ref": "#/components/schemas/BlueprintSourceResponse"
+          },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlueprintInputResponse"
+            },
+            "nullable": true
+          },
+          "applications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlueprintApplicationForGetAllResponse"
+            },
+            "nullable": true
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlueprintServiceForGetAllResponse"
+            },
+            "nullable": true
+          },
+          "clouds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CloudResponse"
+            },
+            "nullable": true
+          },
+          "artifacts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Artifact files of blueprint applications\r\n<remarks>Maps application name to its relative artifacts path in the space</remarks>",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Blueprint validation response",
+        "x-internal": true
+      },
+      "CatalogApplicationForGetResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Application name",
+            "nullable": true
+          },
+          "version": {
+            "type": "string",
+            "description": "Application version",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Blueprint application information",
+        "x-internal": true
+      },
+      "CatalogForGetAllResponse": {
+        "type": "object",
+        "properties": {
+          "blueprint_name": {
+            "type": "string",
+            "description": "Blueprint name",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Blueprint description",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "description": "Blueprint repository URL",
+            "nullable": true
+          },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlueprintInputResponse"
+            },
+            "nullable": true
+          },
+          "last_modified": {
+            "type": "string",
+            "description": "Last modification date and time of the blueprint",
+            "format": "date-time"
+          },
+          "modified_by": {
+            "type": "string",
+            "description": "Name of the last user who modified the blueprint",
+            "nullable": true
+          },
+          "clouds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CloudResponse"
+            },
+            "nullable": true
+          },
+          "is_sample": {
+            "type": "boolean",
+            "description": "Indicates if the blueprint is a sample blueprint"
+          },
+          "applications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CatalogApplicationForGetResponse"
+            },
+            "nullable": true
+          },
+          "artifacts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Artifact files of the blueprint applications\r\n<remarks>Maps application name to its relative artifacts path in the space</remarks>",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlueprintTagResponse"
+            },
+            "nullable": true
+          },
+          "policies": {
+            "$ref": "#/components/schemas/BlueprintPolicyResponse"
+          },
+          "cost": {
+            "$ref": "#/components/schemas/BlueprintCostResponse"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hyperlink"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Published blueprint information\r\n<remarks>\r\nPublished blueprint is a blueprint that is available in blueprint catalog\r\n</remarks>",
+        "x-internal": true
+      },
+      "CatalogForGetResponse": {
+        "type": "object",
+        "properties": {
+          "blueprint_name": {
+            "type": "string",
+            "description": "Blueprint name",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Blueprint description",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "description": "Blueprint repository URL",
+            "nullable": true
+          },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlueprintInputResponse"
+            },
+            "nullable": true
+          },
+          "last_modified": {
+            "type": "string",
+            "description": "Last modification date and time of the blueprint",
+            "format": "date-time"
+          },
+          "modified_by": {
+            "type": "string",
+            "description": "Name of the last user who modified the blueprint",
+            "nullable": true
+          },
+          "clouds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CloudResponse"
+            },
+            "nullable": true
+          },
+          "is_sample": {
+            "type": "boolean",
+            "description": "Indicates if the blueprint is a sample blueprint"
+          },
+          "applications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CatalogApplicationForGetResponse"
+            },
+            "nullable": true
+          },
+          "artifacts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Artifact files of the blueprint applications\r\n<remarks>Maps application name to its relative artifacts path in the space</remarks>",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlueprintTagResponse"
+            },
+            "nullable": true
+          },
+          "policies": {
+            "$ref": "#/components/schemas/BlueprintPolicyResponse"
+          },
+          "cost": {
+            "$ref": "#/components/schemas/BlueprintCostResponse"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hyperlink"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "x-internal": true
+      },
+      "CloudComputeServiceResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Cloud compute service name",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Cloud compute service type (EC2, Azure virtual machine, AKS, EKS, etc.)",
+            "nullable": true
+          },
+          "created_date": {
+            "type": "string",
+            "description": "Cloud compute service creation date and time",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "User name of the cloud compute service owner",
+            "nullable": true
+          },
+          "user_defined": {
+            "type": "boolean",
+            "description": "Indicates if the cloud compute service created automatically or defined by the user<br /><example>EC2 and Azure VM are not user defined while K8s, EKS and AKS are user-defined.</example>"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Cloud compute service information",
+        "x-internal": true
+      },
+      "CloudRegionResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Cloud region ID",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Cloud region name",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Cloud region information",
+        "x-internal": true
+      },
+      "CloudResponse": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "description": "Cloud provider name",
+            "nullable": true
+          },
+          "cloud_account_name": {
+            "type": "string",
+            "description": "Cloud account name",
+            "nullable": true
+          },
+          "compute_service": {
+            "$ref": "#/components/schemas/CloudComputeServiceResponse"
+          },
+          "region": {
+            "$ref": "#/components/schemas/CloudRegionResponse"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Cloud account or Kubernetes compute service information",
+        "x-internal": true
+      },
+      "ComputeAvailability": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "description": "Compute availability type\r\n<remarks>\r\n- 0 (On-demand)<br />\r\n- 1 (spot)\r\n</remarks>",
+        "format": "int32",
+        "x-internal": true
+      },
+      "ConnectLinkResponse": {
+        "type": "object",
+        "properties": {
+          "link": {
+            "type": "string",
+            "description": "Link to connect to the machines using debugging service",
+            "nullable": true
+          },
+          "protocol": {
+            "type": "string",
+            "description": "Protocol for in-browser connection to VM (RDP, SSH)",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Connect link information",
+        "x-internal": true
+      },
+      "CreateEnvResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Environment ID",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Create environment response",
+        "x-internal": true
+      },
+      "CreateProductionBlueRequest": {
+        "type": "object",
+        "properties": {
+          "blueprint_name": {
+            "type": "string",
+            "description": "Blueprint name",
+            "nullable": true
+          },
+          "artifacts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Artifact files required by the applications of the blueprint\r\n<remarks>\r\nFor each application, specify the application name and artifact file path (path is relative to the repo name defined in the space).\r\n</remarks>",
+            "nullable": true
+          },
+          "inputs": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Environment blueprint inputs",
+            "nullable": true
+          },
+          "tags": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Environment blueprint tags",
+            "nullable": true
+          },
+          "compute_availability": {
+            "$ref": "#/components/schemas/ComputeAvailability"
+          },
+          "lazy_load_artifacts": {
+            "type": "boolean",
+            "description": "Set to \"true\" to allow the sandbox to launch without verifying the existence of the artifacts of the sandbox",
+            "nullable": true
+          },
+          "lazy_load_artifacts_timeout": {
+            "type": "integer",
+            "description": "Time to wait (in minutes) for artifacts before setup fails",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request to create blue production environment",
+        "x-internal": true
+      },
+      "CreateProductionGreenRequest": {
+        "type": "object",
+        "properties": {
+          "artifacts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Artifact files required by the applications of the blueprint\r\n<remarks>\r\nFor each application, specify the application name and artifact file path (path is relative to the repo name defined in the space).\r\n</remarks>",
+            "nullable": true
+          },
+          "inputs": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Environment blueprint inputs",
+            "nullable": true
+          },
+          "tags": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Environment blueprint tags",
+            "nullable": true
+          },
+          "compute_availability": {
+            "$ref": "#/components/schemas/ComputeAvailability"
+          },
+          "lazy_load_artifacts": {
+            "type": "boolean",
+            "description": "Set to \"true\" to allow the sandbox to launch without verifying the existence of the artifacts of the sandbox",
+            "nullable": true
+          },
+          "lazy_load_artifacts_timeout": {
+            "type": "integer",
+            "description": "Time to wait (in minutes) for artifacts before setup fails",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request to create green production environment",
+        "x-internal": true
+      },
+      "CreateSandboxInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Input name",
+            "nullable": true
+          },
+          "value": {
+            "type": "string",
+            "description": "Input value",
+            "nullable": true
+          },
+          "display_style": {
+            "type": "string",
+            "description": "Indicates how to display input value in UI\r\n<remarks>\r\nTo display input value in plain text in the UI, do not assign a value.<br />\r\nTo hide input value behind bullets, enter the value \"masked\".\r\n</remarks>",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Input description",
+            "nullable": true
+          },
+          "optional": {
+            "type": "boolean",
+            "description": "Indicates if input is optional\r\n<remarks>\r\nWhen optional is set to true, user can leave the parameter empty.<br />\r\nWhen optional is set to false, empty value(s) will result in validation error(s).\r\n</remarks>"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Sandbox input information",
+        "x-internal": true
+      },
+      "CreateSandboxRequest": {
+        "type": "object",
+        "properties": {
+          "sandbox_name": {
+            "type": "string",
+            "description": "Sandbox name",
+            "nullable": true
+          },
+          "blueprint_name": {
+            "type": "string",
+            "description": "Sandbox blueprint name",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Sandbox description",
+            "nullable": true
+          },
+          "automation": {
+            "type": "boolean",
+            "description": "Launch sandbox integrated pipeline tool in the space (Jenkins, Bitbucket, GitLab, etc.)"
+          },
+          "scheduled_end_time": {
+            "type": "string",
+            "description": "Sandbox scheduled end time in ISO 8601 format\r\n<example>For example, 2021-10-06T08:27:05.215Z.</example><remarks>\r\nCannot have both \"duration\" and \"scheduled_end_time\" specified\r\n</remarks>",
+            "format": "date-time",
+            "nullable": true
+          },
+          "duration": {
+            "type": "string",
+            "description": "Sandbox duration time in ISO 8601 format: \"P{days}DT{hours}H{minutes}M{seconds}S]]\"\r\n<example>For example, P0DT2H3M4S.</example><remarks>\r\nCannot have both \"duration\" and \"scheduled_end_time\" specified\r\n</remarks>",
+            "format": "date-span",
+            "nullable": true
+          },
+          "source": {
+            "$ref": "#/components/schemas/BlueprintSourceRequest"
+          },
+          "visibility": {
+            "type": "string",
+            "description": "Indicates if the sandbox is hidden or visible\r\n<remarks>\r\n- \"normal\": sandbox is visible\r\n- \"hidden\": sandbox is hidden\r\n</remarks>",
+            "nullable": true
+          },
+          "artifacts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Artifact files required by the applications of the blueprint\r\n<remarks>\r\nFor each application, specify the application name and artifact file path (path is relative to the repo name defined in the space).\r\n</remarks>",
+            "nullable": true
+          },
+          "inputs": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Environment blueprint inputs",
+            "nullable": true
+          },
+          "tags": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Environment blueprint tags",
+            "nullable": true
+          },
+          "compute_availability": {
+            "$ref": "#/components/schemas/ComputeAvailability"
+          },
+          "lazy_load_artifacts": {
+            "type": "boolean",
+            "description": "Set to \"true\" to allow the sandbox to launch without verifying the existence of the artifacts of the sandbox",
+            "nullable": true
+          },
+          "lazy_load_artifacts_timeout": {
+            "type": "integer",
+            "description": "Time to wait (in minutes) for artifacts before setup fails",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request to launch a new sandbox",
+        "x-internal": true
+      },
+      "EnvCost": {
+        "type": "object",
+        "properties": {
+          "sum": {
+            "type": "number",
+            "description": "Total cost sum",
+            "format": "double"
+          },
+          "last_update": {
+            "type": "string",
+            "description": "Time of the last update of environment cost",
+            "format": "date-time"
+          },
+          "final": {
+            "type": "boolean",
+            "description": "Is the cost final"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code in ISO 4217 format (3 letters like USD, EUR, GBP etc.)",
+            "nullable": true
+          },
+          "incomplete": {
+            "type": "boolean",
+            "description": "Is the cost incomplete"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Environment cost information",
+        "x-internal": true
+      },
+      "EnvironmentType": {
+        "type": "object",
+        "additionalProperties": false,
+        "x-internal": true
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Error name",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "description": "Error code",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Error information",
+        "x-internal": true
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "description": "Array of errors",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Errors received from an API",
+        "x-internal": true
+      },
+      "Hyperlink": {
+        "type": "object",
+        "properties": {
+          "rel": {
+            "type": "string",
+            "description": "Link relation type that describes how the current context (source) is related to the target resource",
+            "nullable": true
+          },
+          "href": {
+            "type": "string",
+            "description": "URI link to the API",
+            "nullable": true
+          },
+          "method": {
+            "type": "string",
+            "description": "HTTP method (GET, POST, PUT, etc.)",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Links to API",
+        "x-internal": true
+      },
+      "LaunchingProgressResponse": {
+        "type": "object",
+        "properties": {
+          "creating_infrastructure": {
+            "$ref": "#/components/schemas/LaunchingProgressStepResponse"
+          },
+          "preparing_artifacts": {
+            "$ref": "#/components/schemas/LaunchingProgressStepResponse"
+          },
+          "deploying_applications": {
+            "$ref": "#/components/schemas/LaunchingProgressStepResponse"
+          },
+          "verifying_environment": {
+            "$ref": "#/components/schemas/LaunchingProgressStepResponse"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Launching progress of an environment information",
+        "x-internal": true
+      },
+      "LaunchingProgressStepResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Launching progress status (\"pending\", \"in progress\", \"done\", etc.)",
+            "nullable": true
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total of items to be launched",
+            "format": "int32"
+          },
+          "succeeded": {
+            "type": "integer",
+            "description": "Total of items that were launched successfully",
+            "format": "int32"
+          },
+          "failed": {
+            "type": "integer",
+            "description": "Total of items that failed to launch",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Launching progress step details",
+        "x-internal": true
+      },
+      "ModelForLogin": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User password"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Login request",
+        "x-internal": true
+      },
+      "OutputDisplayStyle": {
+        "type": "object",
+        "additionalProperties": false,
+        "x-internal": true
+      },
+      "ParameterStoreItemRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Parameter name\r\n<remarks>\r\n- Parameter Name is case-insensitive<br />\r\n- Parameter Name may only contain URL-supported characters including letters, digits, underscores, dashes, etc.\r\n</remarks>",
+            "nullable": true
+          },
+          "origin": {
+            "$ref": "#/components/schemas/ParameterStoreOrigin"
+          },
+          "description": {
+            "type": "string",
+            "description": "Parameter description",
+            "nullable": true
+          },
+          "value": {
+            "$ref": "#/components/schemas/ParameterStoreValueModel"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request to add parameter to Parameter Store",
+        "x-internal": true
+      },
+      "ParameterStoreItemResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Parameter name",
+            "nullable": true
+          },
+          "origin": {
+            "$ref": "#/components/schemas/ParameterStoreOrigin"
+          },
+          "description": {
+            "type": "string",
+            "description": "Parameter description",
+            "nullable": true
+          },
+          "value": {
+            "$ref": "#/components/schemas/ParameterStoreValueModel"
+          },
+          "modified_by": {
+            "$ref": "#/components/schemas/UserResponse"
+          },
+          "last_modified": {
+            "type": "string",
+            "description": "Last modification date and time of the parameter",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Parameter Store item information",
+        "x-internal": true
+      },
+      "ParameterStoreOrigin": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Torque’s Parameter Store supports two types of parameters:\r\n- \"literal\": Parameter with a string value<br />\r\n- \"aws-ssm\": Parameter that references a string parameter in the AWS Parameter Store",
+        "x-internal": true
+      },
+      "ParameterStoreValueModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Value of parameter based on its origin:\r\n<remarks>\r\n- AWS System Manager (SSM): { \"path\" : \"\" }<br />\r\n- literal: { \"content\" : \"\" }\r\n</remarks>",
+        "x-internal": true
+      },
+      "ProductionBlueResponse": {
+        "type": "object",
+        "properties": {
+          "has_green": {
+            "type": "boolean",
+            "description": "Indicates if there is a green production environment"
+          },
+          "sandbox_id": {
+            "type": "string",
+            "description": "Sandbox ID",
+            "nullable": true
+          },
+          "production_status": {
+            "type": "string",
+            "description": "Production environment status (\"launching\", \"active\", \"pending\", etc.)",
+            "nullable": true
+          },
+          "update_status": {
+            "type": "string",
+            "description": "Production environment update status (\"deploying green\", \"transitioning green\", \"cleaning up\", etc.)",
+            "nullable": true
+          },
+          "blueprint_description": {
+            "type": "string",
+            "description": "Description of the production environment's blueprint",
+            "nullable": true
+          },
+          "applications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationResponse"
+            },
+            "nullable": true
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceResponse"
+            },
+            "nullable": true
+          },
+          "artifacts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Production environment artifacts",
+            "nullable": true
+          },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateSandboxInput"
+            },
+            "nullable": true
+          },
+          "outputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SandboxOutput"
+            },
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagResponse"
+            },
+            "description": "System, pre-defined and user-defined tags sandbox was launched with",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "description": "Environment ID",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Environment name",
+            "nullable": true
+          },
+          "blueprint_name": {
+            "type": "string",
+            "description": "Blueprint name",
+            "nullable": true
+          },
+          "enable_logs": {
+            "type": "boolean",
+            "description": "Enable logs flag",
+            "nullable": true
+          },
+          "status_details": {
+            "type": "string",
+            "description": "Environment status details (\"initiating\", \"waiting\", \"launching\", etc.)",
+            "nullable": true
+          },
+          "status_error_description": {
+            "type": "string",
+            "description": "Error status description of environment",
+            "nullable": true
+          },
+          "deployment_start_time": {
+            "type": "string",
+            "description": "Environment deployment start time",
+            "nullable": true
+          },
+          "create_time": {
+            "type": "string",
+            "description": "Environment creation time",
+            "nullable": true
+          },
+          "build": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SandboxError"
+            },
+            "nullable": true
+          },
+          "owner": {
+            "$ref": "#/components/schemas/UserResponse"
+          },
+          "debugging_service": {
+            "type": "string",
+            "description": "Debugging service information (\"not ready\", \"on\", \"off\", etc.)",
+            "nullable": true
+          },
+          "launching_progress": {
+            "$ref": "#/components/schemas/LaunchingProgressResponse"
+          },
+          "cost": {
+            "$ref": "#/components/schemas/EnvCost"
+          },
+          "internet_facing": {
+            "type": "boolean",
+            "description": "Indicates if environment is internet-facing",
+            "nullable": true
+          },
+          "direct_access": {
+            "type": "string",
+            "description": "Indicates if there is a direct access to environment",
+            "nullable": true
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hyperlink"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Blue production information",
+        "x-internal": true
+      },
+      "ProductionGreenResponse": {
+        "type": "object",
+        "properties": {
+          "exposure": {
+            "type": "integer",
+            "description": "Exposure level in percentage of the green production environment to user traffic (0-100)",
+            "format": "int32"
+          },
+          "sandbox_id": {
+            "type": "string",
+            "description": "Sandbox ID",
+            "nullable": true
+          },
+          "production_status": {
+            "type": "string",
+            "description": "Production environment status (\"launching\", \"active\", \"pending\", etc.)",
+            "nullable": true
+          },
+          "update_status": {
+            "type": "string",
+            "description": "Production environment update status (\"deploying green\", \"transitioning green\", \"cleaning up\", etc.)",
+            "nullable": true
+          },
+          "blueprint_description": {
+            "type": "string",
+            "description": "Description of the production environment's blueprint",
+            "nullable": true
+          },
+          "applications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationResponse"
+            },
+            "nullable": true
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceResponse"
+            },
+            "nullable": true
+          },
+          "artifacts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Production environment artifacts",
+            "nullable": true
+          },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateSandboxInput"
+            },
+            "nullable": true
+          },
+          "outputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SandboxOutput"
+            },
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagResponse"
+            },
+            "description": "System, pre-defined and user-defined tags sandbox was launched with",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "description": "Environment ID",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Environment name",
+            "nullable": true
+          },
+          "blueprint_name": {
+            "type": "string",
+            "description": "Blueprint name",
+            "nullable": true
+          },
+          "enable_logs": {
+            "type": "boolean",
+            "description": "Enable logs flag",
+            "nullable": true
+          },
+          "status_details": {
+            "type": "string",
+            "description": "Environment status details (\"initiating\", \"waiting\", \"launching\", etc.)",
+            "nullable": true
+          },
+          "status_error_description": {
+            "type": "string",
+            "description": "Error status description of environment",
+            "nullable": true
+          },
+          "deployment_start_time": {
+            "type": "string",
+            "description": "Environment deployment start time",
+            "nullable": true
+          },
+          "create_time": {
+            "type": "string",
+            "description": "Environment creation time",
+            "nullable": true
+          },
+          "build": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SandboxError"
+            },
+            "nullable": true
+          },
+          "owner": {
+            "$ref": "#/components/schemas/UserResponse"
+          },
+          "debugging_service": {
+            "type": "string",
+            "description": "Debugging service information (\"not ready\", \"on\", \"off\", etc.)",
+            "nullable": true
+          },
+          "launching_progress": {
+            "$ref": "#/components/schemas/LaunchingProgressResponse"
+          },
+          "cost": {
+            "$ref": "#/components/schemas/EnvCost"
+          },
+          "internet_facing": {
+            "type": "boolean",
+            "description": "Indicates if environment is internet-facing",
+            "nullable": true
+          },
+          "direct_access": {
+            "type": "string",
+            "description": "Indicates if there is a direct access to environment",
+            "nullable": true
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hyperlink"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Green production information",
+        "x-internal": true
+      },
+      "ProductionResponseListItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Production environment ID",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Production environment name",
+            "nullable": true
+          },
+          "blueprint_description": {
+            "type": "string",
+            "description": "Description of the production environment's blueprint",
+            "nullable": true
+          },
+          "create_time": {
+            "type": "string",
+            "description": "Production environment creation date in ISO 8601 format",
+            "nullable": true
+          },
+          "update_status": {
+            "type": "string",
+            "description": "Status of the production environment update process (\"None\", \"Deploying Green\", \"Cleaning Up\", etc.)",
+            "nullable": true
+          },
+          "update_strategy": {
+            "type": "string",
+            "description": "Production environment strategy (currently only blue/green is supported)",
+            "nullable": true
+          },
+          "blue_status": {
+            "type": "string",
+            "description": "Blue production environment status",
+            "nullable": true
+          },
+          "deployment_start_time": {
+            "type": "string",
+            "description": "Production environment deployment start time in ISO 8601 format",
+            "nullable": true
+          },
+          "blue_applications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationResponseBase"
+            },
+            "nullable": true
+          },
+          "green_status": {
+            "type": "string",
+            "description": "Green production environment status",
+            "nullable": true
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hyperlink"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Production information",
+        "x-internal": true
+      },
+      "RefreshTokenModel": {
+        "type": "object",
+        "properties": {
+          "refresh_token": {
+            "type": "string",
+            "description": "Refresh token value",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Model of refresh_token returned in the response of login method",
+        "x-internal": true
+      },
+      "SandboxError": {
+        "type": "object",
+        "properties": {
+          "time": {
+            "type": "string",
+            "description": "Time when error occured",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "description": "Error code",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Sandbox error information",
+        "x-internal": true
+      },
+      "SandboxNetwork": {
+        "type": "object",
+        "properties": {
+          "region": {
+            "type": "string",
+            "description": "Cloud account region",
+            "nullable": true
+          },
+          "network_id": {
+            "type": "string",
+            "description": "Virtual network ID (AWS: VPC ID; Azure: VNet name)",
+            "nullable": true
+          },
+          "gateway_subnet": {
+            "type": "string",
+            "description": "ID of subnet where application gateway is installed",
+            "nullable": true
+          },
+          "management_subnet": {
+            "type": "string",
+            "description": "ID of subnet where management infrastructure of sandbox is installed",
+            "nullable": true
+          },
+          "application_subnets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "ID of subnet(s) where applications of sandbox are deployed",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Sandbox network details",
+        "x-internal": true
+      },
+      "SandboxOutput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "display_style": {
+            "$ref": "#/components/schemas/OutputDisplayStyle"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "x-internal": true
+      },
+      "SandboxResponse": {
+        "type": "object",
+        "properties": {
+          "blueprint_description": {
+            "type": "string",
+            "description": "Blueprint description",
+            "nullable": true
+          },
+          "applications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationResponse"
+            },
+            "nullable": true
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceResponse"
+            },
+            "nullable": true
+          },
+          "artifacts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Sandbox artifacts\r\n<remarks>\r\nMaps application name to its relative artifacts path in the space\r\n</remarks>",
+            "nullable": true
+          },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateSandboxInput"
+            },
+            "nullable": true
+          },
+          "network": {
+            "$ref": "#/components/schemas/SandboxNetwork"
+          },
+          "outputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SandboxOutput"
+            },
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagResponse"
+            },
+            "description": "System, pre-defined and user-defined tags sandbox was launched with",
+            "nullable": true
+          },
+          "scheduled_end_time": {
+            "type": "string",
+            "description": "Sandbox scheduled end time in ISO 8601 format",
+            "nullable": true
+          },
+          "automation": {
+            "type": "boolean",
+            "description": "Launch sandbox integrated pipeline tool in the space (Jenkins, Bitbucket, GitLab, etc.)"
+          },
+          "sandbox_status": {
+            "type": "string",
+            "description": "Sandbox status (\"launching\", \"initiating\", \"deploying\", etc.)",
+            "nullable": true
+          },
+          "end_time": {
+            "type": "string",
+            "description": "Time the sandbox actually ended in ISO 8601 format",
+            "nullable": true
+          },
+          "source": {
+            "$ref": "#/components/schemas/BlueprintSourceResponse"
+          },
+          "visibility": {
+            "type": "string",
+            "description": "Indicates if the sandbox is hidden or visible",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "description": "Environment ID",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Environment name",
+            "nullable": true
+          },
+          "blueprint_name": {
+            "type": "string",
+            "description": "Blueprint name",
+            "nullable": true
+          },
+          "enable_logs": {
+            "type": "boolean",
+            "description": "Enable logs flag",
+            "nullable": true
+          },
+          "status_details": {
+            "type": "string",
+            "description": "Environment status details (\"initiating\", \"waiting\", \"launching\", etc.)",
+            "nullable": true
+          },
+          "status_error_description": {
+            "type": "string",
+            "description": "Error status description of environment",
+            "nullable": true
+          },
+          "deployment_start_time": {
+            "type": "string",
+            "description": "Environment deployment start time",
+            "nullable": true
+          },
+          "create_time": {
+            "type": "string",
+            "description": "Environment creation time",
+            "nullable": true
+          },
+          "build": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SandboxError"
+            },
+            "nullable": true
+          },
+          "owner": {
+            "$ref": "#/components/schemas/UserResponse"
+          },
+          "debugging_service": {
+            "type": "string",
+            "description": "Debugging service information (\"not ready\", \"on\", \"off\", etc.)",
+            "nullable": true
+          },
+          "launching_progress": {
+            "$ref": "#/components/schemas/LaunchingProgressResponse"
+          },
+          "cost": {
+            "$ref": "#/components/schemas/EnvCost"
+          },
+          "internet_facing": {
+            "type": "boolean",
+            "description": "Indicates if environment is internet-facing",
+            "nullable": true
+          },
+          "direct_access": {
+            "type": "string",
+            "description": "Indicates if there is a direct access to environment",
+            "nullable": true
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hyperlink"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Sandbox information",
+        "x-internal": true
+      },
+      "SandboxResponseListItem": {
+        "type": "object",
+        "properties": {
+          "applications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationResponseBase"
+            },
+            "nullable": true
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceResponse"
+            },
+            "nullable": true
+          },
+          "scheduled_end_time": {
+            "type": "string",
+            "description": "Sandbox scheduled end time in ISO 8601 format",
+            "nullable": true
+          },
+          "automation": {
+            "type": "boolean",
+            "description": "Launch sandbox integrated pipeline tool in the space (Jenkins, Bitbucket, GitLab, etc.)"
+          },
+          "sandbox_status": {
+            "type": "string",
+            "description": "Sandbox status (\"launching\", \"initiating\", \"deploying\", etc.)",
+            "nullable": true
+          },
+          "end_time": {
+            "type": "string",
+            "description": "Time the sandbox actually ended in ISO 8601 format",
+            "nullable": true
+          },
+          "source": {
+            "$ref": "#/components/schemas/BlueprintSourceResponse"
+          },
+          "visibility": {
+            "type": "string",
+            "description": "Indicates if the sandbox is hidden or visible",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "description": "Environment ID",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Environment name",
+            "nullable": true
+          },
+          "blueprint_name": {
+            "type": "string",
+            "description": "Blueprint name",
+            "nullable": true
+          },
+          "enable_logs": {
+            "type": "boolean",
+            "description": "Enable logs flag",
+            "nullable": true
+          },
+          "status_details": {
+            "type": "string",
+            "description": "Environment status details (\"initiating\", \"waiting\", \"launching\", etc.)",
+            "nullable": true
+          },
+          "status_error_description": {
+            "type": "string",
+            "description": "Error status description of environment",
+            "nullable": true
+          },
+          "deployment_start_time": {
+            "type": "string",
+            "description": "Environment deployment start time",
+            "nullable": true
+          },
+          "create_time": {
+            "type": "string",
+            "description": "Environment creation time",
+            "nullable": true
+          },
+          "build": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SandboxError"
+            },
+            "nullable": true
+          },
+          "owner": {
+            "$ref": "#/components/schemas/UserResponse"
+          },
+          "debugging_service": {
+            "type": "string",
+            "description": "Debugging service information (\"not ready\", \"on\", \"off\", etc.)",
+            "nullable": true
+          },
+          "launching_progress": {
+            "$ref": "#/components/schemas/LaunchingProgressResponse"
+          },
+          "cost": {
+            "$ref": "#/components/schemas/EnvCost"
+          },
+          "internet_facing": {
+            "type": "boolean",
+            "description": "Indicates if environment is internet-facing",
+            "nullable": true
+          },
+          "direct_access": {
+            "type": "string",
+            "description": "Indicates if there is a direct access to environment",
+            "nullable": true
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hyperlink"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Sandbox information",
+        "x-internal": true
+      },
+      "ServiceResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Service name",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/ServiceStatus"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ServiceType"
+          },
+          "icon": {
+            "type": "string",
+            "description": "Service icon",
+            "nullable": true
+          },
+          "stages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StageResponse"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Service information",
+        "x-internal": true
+      },
+      "ServiceStatus": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Status of service (\"Pending\", \"Aborted\", \"Done\", etc.)",
+        "x-internal": true
+      },
+      "ServiceType": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Service type (\"All\", \"Terraform\", \"Unknown\", etc.)",
+        "x-internal": true
+      },
+      "StageResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "time": {
+            "$ref": "#/components/schemas/TimeDataResponse"
+          },
+          "activities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActivityResponse"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "x-internal": true
+      },
+      "TagResponse": {
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string",
+            "description": "Tag scope ('account', 'space', 'blueprint' and 'runtime')",
+            "nullable": true
+          },
+          "possible_values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tag possible values\r\n<remarks>Tag value must be one of the possible values</remarks>",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Tag description",
+            "nullable": true
+          },
+          "tag_type": {
+            "$ref": "#/components/schemas/TagType"
+          },
+          "name": {
+            "type": "string",
+            "description": "Tag name",
+            "nullable": true
+          },
+          "value": {
+            "type": "string",
+            "description": "Tag value",
+            "nullable": true
+          },
+          "modified_by": {
+            "type": "string",
+            "description": "Name of the last user who modified the tag",
+            "nullable": true
+          },
+          "last_modified": {
+            "type": "string",
+            "description": "Last modification data and time of the tag",
+            "format": "date-time",
+            "nullable": true
+          },
+          "created_by": {
+            "type": "string",
+            "description": "Name of the user who created the tag",
+            "nullable": true
+          },
+          "created_date": {
+            "type": "string",
+            "description": "Creation date and time of the tag",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Tag response",
+        "x-internal": true
+      },
+      "TagType": {
+        "type": "object",
+        "additionalProperties": false,
+        "x-internal": true
+      },
+      "TimeDataResponse": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "nullable": true
+          },
+          "duration": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "x-internal": true
+      },
+      "TokenResponse": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "Access token string as issued by the authorization server",
+            "nullable": true
+          },
+          "refresh_token": {
+            "type": "string",
+            "description": "Refresh token to be used to extend existing session",
+            "nullable": true
+          },
+          "token_type": {
+            "type": "string",
+            "description": "Token type, typically just the string \"bearer\"",
+            "nullable": true
+          },
+          "expires_in": {
+            "type": "integer",
+            "description": "Access token validity period",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Describes the authentication server response if the request for an access token is valid\r\n<remarks>\r\n Contains access token and some additional properties about the authorization\r\n</remarks>",
+        "x-internal": true
+      },
+      "UpdateBlueprintPolicyRequest": {
+        "type": "object",
+        "properties": {
+          "max_duration": {
+            "type": "string",
+            "description": "Max duration of sandbox in ISO 8601 format: P{days}DT{hours}H{minutes}M{seconds}S] (for example, 'P0DT2H3M4S')",
+            "format": "date-span",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Update Blueprint policy request",
+        "x-internal": true
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "description": "First name",
+            "nullable": true
+          },
+          "last_name": {
+            "type": "string",
+            "description": "Last name",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Email",
+            "nullable": true
+          },
+          "join_date": {
+            "type": "string",
+            "description": "Date when the user joined Torque",
+            "format": "date-time"
+          },
+          "display_first_name": {
+            "type": "string",
+            "description": "First name meant for display only.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "display_last_name": {
+            "type": "string",
+            "description": "Last name meant for display only.",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "User information",
+        "x-internal": true
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
+}
