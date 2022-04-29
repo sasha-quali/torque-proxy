@@ -1,15 +1,4 @@
-src/Quali.Torque.Api/Attributes/ValidateModelStateAttribute.cs
-src/Quali.Torque.Api/Authentication/ApiAuthentication.cs
-src/Quali.Torque.Api/Controllers/AccessTokensApi.cs
-src/Quali.Torque.Api/Controllers/AgentApi.cs
-src/Quali.Torque.Api/Controllers/BlueprintsApi.cs
-src/Quali.Torque.Api/Controllers/BlueprintsCatalogApi.cs
-src/Quali.Torque.Api/Controllers/ParametersApi.cs
-src/Quali.Torque.Api/Controllers/ProductionEnvironmentsApi.cs
-src/Quali.Torque.Api/Controllers/SandboxEnvironmentsApi.cs
-src/Quali.Torque.Api/Controllers/SettingsApi.cs
 src/Quali.Torque.Api/Converters/CustomEnumConverter.cs
-src/Quali.Torque.Api/Formatters/InputFormatterStream.cs
 src/Quali.Torque.Api/Models/ActivityResponse.cs
 src/Quali.Torque.Api/Models/AddCatalogRequest.cs
 src/Quali.Torque.Api/Models/AppInstanceResponse.cs
@@ -65,6 +54,5 @@ src/Quali.Torque.Api/Models/TimeDataResponse.cs
 src/Quali.Torque.Api/Models/TokenResponse.cs
 src/Quali.Torque.Api/Models/UpdateBlueprintPolicyRequest.cs
 src/Quali.Torque.Api/Models/UserResponse.cs
-src/Quali.Torque.Api/OpenApi/TypeExtensions.cs
 src/Quali.Torque.Api/Quali.Torque.Api.csproj
 src/Quali.Torque.Api/Quali.Torque.Api.nuspec

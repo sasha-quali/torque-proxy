@@ -8,6 +8,7 @@ build.sh
 build.bat
 README.md
 *.sln
+*.nuspec
 **/.gitignore
 **/appsettings.json
 **/Dockerfile
@@ -16,4 +17,8 @@ README.md
 **/wwwroot
 **/Properties
 **/Filters
-**/OpenApi
+**/OpenApi/
+**/Controllers/
+**/Formatters/
+**/Attributes/
+**/Authentication/

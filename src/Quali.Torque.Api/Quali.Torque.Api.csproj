@@ -10,7 +10,7 @@
     <OutputType>Library</OutputType>
     <AssemblyName>Quali.Torque.Api</AssemblyName>
     <PackageId>Quali.Torque.Api</PackageId>
-    <UserSecretsId>c6e21fef-88ce-4404-9bfc-bbb4e8a8daee</UserSecretsId>
+    <UserSecretsId>dd42afcf-e7e2-4373-8326-fb485f0ba3db</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>

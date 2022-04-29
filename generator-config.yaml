@@ -4,6 +4,8 @@ buildTarget: library
 isLibrary: true
 apiTests: false
 modelTests: false
+apis: false
 supportingFiles: false
-generateBody: fasle
+generateBody: false
 classModifier: abstract
+operationIsAsync: true
